@@ -155,4 +155,28 @@ public class UsersController : Controller
 
     #endregion
 
+    #region Block
+    //Get: Users/Block/1
+    public async Task<IActionResult> Block(int id)
+    {
+        var user = await userService.RetrieveByIdAsync(id);
+        if (user is null || user.IsDeleted)
+            return View("NotFound");
+        var userForUpdateDto = mapper.Map<UserForUpdateDto>(user);
+        return View(userForUpdateDto);
+    }
+
+
+    [HttpPost, ActionName("Block")]
+    public async Task<IActionResult> BlockConfirmed(int id)
+    {
+        var user = await userService.RetrieveByIdAsync(id);
+        if (user is null || user.IsDeleted)
+            return View("NotFound");
+
+        await userService.Block(id);
+        return RedirectToAction(nameof(Index));
+    }
+
+    #endregion
 }

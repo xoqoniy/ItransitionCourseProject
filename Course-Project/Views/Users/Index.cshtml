@@ -91,7 +91,44 @@
                         <td class="align-middle">
                             <a asp-controller="Users" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary text-white"> <i class="bi bi-pencil-square"></i>Edit </a>
                             <a asp-controller ="Users" asp-action ="Delete" asp-route-id="@item.Id" class="btn btn-danger text-white"> <i class="bi bi-trash"></i>Delete </a>
+                            @*<a asp-controller="Users" asp-action="Block" asp-route-id="@item.Id" class="btn btn-warning text-white"> <i class="bi bi-person-fill-slash"></i>Block </a>*@
+                            
+                            @if (!item.IsBlocked)
+                            {
+                                <!-- Add the "Block" button form for active users -->
+                                <form id="blockForm-@item.Id" method="post" asp-action="Block">
+                                    <input type="hidden" asp-for="Id" value="@item.Id" />
+                                    <!-- Include any other required properties here -->
+                                    <button type="button" class="btn btn-warning text-white" data-toggle="modal" data-target="#confirmationModal-@item.Id"> <i class="bi bi-person-fill-slash"></i>Block</button>
+                                </form>
 
+                                <!-- Confirmation Modal -->
+                                <div class="modal fade" id="confirmationModal-@item.Id" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmationModalLabel">Confirm Block</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to block @item.Username?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                                <button type="submit" class="btn btn-danger">Yes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <!-- Display an alternative message or leave it blank when the user is not active -->
+                                <!-- ... (e.g., You can show "N/A" or "Not active") ... -->
+                            }
                         </td>
 
                     </tr>
@@ -122,3 +159,40 @@
     <a asp-controller="Users" asp-action="Create" class="btn btn-outline-success"> <i class="bi bi-person-plus-fill"></i> Add New</a>
 </div>
 
+
+            
+@section Scripts {
+    <!-- Add Bootstrap JS script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script>
+        // JavaScript to handle the form submission when the "Yes" button is clicked
+        $(function () {
+            $('form[id^="blockForm-"]').on('submit', function (e) {
+                // Prevent the default form submission
+                e.preventDefault();
+
+                // Get the form's ID to extract the user ID from it
+                var formId = $(this).attr('id');
+                var userId = formId.replace('blockForm-', '');
+
+                // Update the confirmation modal with the user name
+                var userName = $(`#blockForm-${userId}`).siblings('.align-middle').first().text();
+                $('#confirmationModalLabel').text('Confirm Block');
+                $('#confirmationModalBody').text('Are you sure you want to block ' + userName + '?');
+
+                // Show the confirmation dialog
+                $('#confirmationModal').modal('show');
+
+                // Handle the form submission when "Yes" is clicked in the confirmation modal
+                $('#confirmationModal').on('click', '.btn-danger', function () {
+                    console.log(`Submitting form with userId ${userId}`);
+                    $(`#blockForm-${userId}`).off('submit').submit(); // Submit the corresponding form
+                });
+            });
+        });
+    </script>
+
+
+}

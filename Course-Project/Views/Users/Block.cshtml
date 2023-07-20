@@ -1,0 +1,50 @@
+﻿@using Course_Project.Service.DTOs.Users
+@model UserForUpdateDto
+
+@{
+    ViewData["Title"] = "Block User";
+}
+
+<!-- Add the modal for the confirmation dialog -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Block</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to block @Model.UserName?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" id="confirmBlockButton">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row text">
+    <!-- Your existing code for displaying user information -->
+    <!-- Add the "Block" button -->
+    <button class="btn btn-warning" id="blockButton" data-toggle="modal" data-target="#confirmationModal">Block</button>
+
+    <!-- Add the form for block confirmation -->
+    <form id="blockForm" method="post" asp-action="BlockConfirmed">
+        <input type="hidden" asp-for="Id" /> <!-- Include any other required properties here -->
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // JavaScript to handle the block action when the "Yes" button is clicked
+        $(function () {
+            $('#confirmBlockButton').on('click', function () {
+                // Submit the form when "Yes" is clicked in the confirmation modal
+                $('#blockForm').submit();
+            });
+        }); 
+    </script>
+}
