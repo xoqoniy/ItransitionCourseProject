@@ -58,7 +58,7 @@ public class UsersController : Controller
     }
 
 
-    [HttpPost]
+    [HttpPost, ActionName("Delete")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var user = await userService.RetrieveByIdAsync(id);
