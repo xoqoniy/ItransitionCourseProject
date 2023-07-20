@@ -1,0 +1,124 @@
+﻿@using Course_Project.Domain.Entities;
+@using Course_Project.Service.DTOs.Users;
+@model Task<IEnumerable<UserForResultDto>>
+
+
+@*Define ViewData *@
+
+@{
+    ViewData["Title"] = "Index";
+
+    Pager pager = new Pager();
+
+    int pageNo = 0;
+    if(ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage; 
+    }
+
+}
+
+
+@*Write code*@
+
+
+
+
+<div class="row">
+    <div class="col-md-8 offset-md-2"> 
+        <h1> User Management - All users </h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username </th>
+                    <th>Email</th>
+                    <th>IsDeleted</th>
+                    <th>IsActive</th>
+                    <th>IsAdmin</th>
+
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach(var item in await Model)
+                {
+                    <tr>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.Username)
+                        </td>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.Email)
+
+                        </td>
+                        <td class="align-middle">
+                            @if (item.IsDeleted)
+                            {
+                                <span>True</span>
+                            }
+                            else
+                            {
+                                <span>False</span>
+                            }
+                        </td>
+                        <td class="align-middle">
+                            @if (item.IsBlocked)
+                            {
+                                <span>True</span>
+                            }
+                            else
+                            {
+                                <span>False</span>
+                            }
+                        </td>
+                        <td class="align-middle">
+                            @if (item.IsAdmin)
+                            {
+                                <span>True</span>
+                            }
+                            else
+                            {
+                                <span>False</span>
+                            }
+                        </td>
+
+                        
+                        @*<td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.Password)
+                        </td>*@
+                        <td class="align-middle">
+                            <a asp-controller="Users" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary text-white"> <i class="bi bi-pencil-square"></i>Edit </a>
+                            <a asp-controller ="Users" asp-action ="DeleteConfirmed" asp-route-id="@item.Id" class="btn btn-danger text-white"> <i class="bi bi-trash"></i>Delete </a>
+
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="container">
+    @if(pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-end">
+
+            @for(var pge = pager.StartPage; pge < pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge == pager.CurrentPage? "active" : "")">
+                    <a class="page-link" asp-controller="User" asp-action="Index" asp-route-pg ="@pge" > @pge </a>
+                </li>
+            }
+
+        </ul>
+    }
+</div>
+
+<div style="position:fixed;right: 25px; bottom:25px; "class="text-white">
+    <a asp-controller="Users" asp-action="Create" class="btn btn-outline-success"> <i class="bi bi-person-plus-fill"></i> Add New</a>
+</div>
+
